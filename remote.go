@@ -6,6 +6,8 @@ import (
 	"io"
 	"reflect"
 	"slices"
+
+	"github.com/fsnotify/fsnotify"
 )
 
 // SupportedRemoteProviders are universally supported remote providers.
@@ -220,6 +222,7 @@ func (v *Viper) watchKeyValueConfigOnChannel() error {
 				b := <-rc
 				reader := bytes.NewReader(b.Value)
 				v.unmarshalReader(reader, v.kvstore)
+				v.onConfigChange(fsnotify.Event{})
 			}
 		}(respc)
 		return nil
